@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, User } from 'lucide-react';
+// import { Bell, User } from 'lucide-react';
 import { useTopics } from '../../context/TopicContext';
 
 const Header = () => {
@@ -23,14 +23,15 @@ const Header = () => {
               </>
             )}
           </div>
-          <div className="flex items-center space-x-4">
+          {/* Remove the Bell and User icons */}
+          {/* <div className="flex items-center space-x-4">
             <button className="p-2 hover:bg-gray-100 rounded-full">
               <Bell size={20} className="text-gray-600" />
             </button>
             <button className="p-2 hover:bg-gray-100 rounded-full">
               <User size={20} className="text-gray-600" />
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </header>
