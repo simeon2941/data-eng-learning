@@ -1,7 +1,8 @@
+// src/App.jsx
 import React from 'react';
-import { TopicProvider } from './context/TopicContext';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
+import { TopicProvider } from './context/TopicContext';
 
 function App() {
   return (

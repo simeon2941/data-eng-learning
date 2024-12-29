@@ -1,48 +1,130 @@
-// src/components/topics/TopicDetail.jsx
-import React from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useTopics } from '../../context/TopicContext';
-import ExampleVisualization from '../visualizations/ExampleVisualization';
+import { ChevronLeft, Clock, BookOpen, Tag } from 'lucide-react';
 
 const TopicDetail = () => {
-  const { selectedTopic, examples } = useTopics();
+  const { selectedTopic, setSelectedTopic } = useTopics();
+  const [activeTab, setActiveTab] = useState('overview');
+  const [exampleContent, setExampleContent] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!selectedTopic) return;
+
+    const loadExampleContent = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        // Try to import the example's index file
+        const basePath = `../../examples/${selectedTopic.category.toLowerCase()}/${selectedTopic.difficulty.toLowerCase()}/${selectedTopic.id}`;
+        
+        // Import both the example component and its metadata
+        const [exampleModule, metadataModule] = await Promise.all([
+          import(/* @vite-ignore */ `${basePath}/index.jsx`),
+          import(/* @vite-ignore */ `${basePath}/metadata.js`)
+        ]);
+
+        setExampleContent({
+          Component: exampleModule.default,
+          metadata: metadataModule.metadata
+        });
+      } catch (err) {
+        console.error('Error loading example:', err);
+        setError('Failed to load example content. Please try again later.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadExampleContent();
+  }, [selectedTopic]);
 
   if (!selectedTopic) return null;
 
-  // Filter out any undefined examples
-  const topicExamples = selectedTopic.examples
-    .map(exampleId => examples[exampleId])
-    .filter(example => example !== undefined);
+  if (isLoading) {
+    return (
+      <div className="max-w-5xl mx-auto p-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-5xl mx-auto p-8">
+        <button
+          onClick={() => setSelectedTopic(null)}
+          className="inline-flex items-center text-sm text-gray-500 hover:text-gray-900 mb-4"
+        >
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Back to Examples
+        </button>
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-8">
-      <h1 className="text-3xl font-bold mb-6">{selectedTopic.title}</h1>
-      <p className="text-gray-600 mb-8">{selectedTopic.description}</p>
-      
-      <div className="space-y-8">
-        {topicExamples.length > 0 ? (
-          topicExamples.map(example => (
-            <div key={example.id} className="border-t pt-6">
-              <h2 className="text-xl font-semibold mb-4">{example.title}</h2>
-              <p className="text-gray-600 mb-6">{example.content}</p>
-              
-              {example.code && (
-                <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                  <pre className="language-javascript">
-                    <code>{example.code}</code>
-                  </pre>
-                </div>
-              )}
-              
-              {example.visualization && (
-                <div className="bg-gray-100 p-4 rounded-lg">
-                  <ExampleVisualization type={example.visualization} data={example} />
-                </div>
-              )}
+    <div className="max-w-5xl mx-auto space-y-6 p-8">
+      {/* Header with back button */}
+      <button
+        onClick={() => setSelectedTopic(null)}
+        className="inline-flex items-center text-sm text-gray-500 hover:text-gray-900"
+      >
+        <ChevronLeft className="h-4 w-4 mr-1" />
+        Back to Examples
+      </button>
+
+      {/* Topic Header */}
+      <div className="bg-white rounded-lg p-6 shadow-sm">
+        <div className="space-y-4">
+          <h1 className="text-2xl font-bold text-gray-900">{selectedTopic.title}</h1>
+          <p className="text-gray-600">{selectedTopic.description}</p>
+          
+          {/* Metadata */}
+          <div className="flex flex-wrap gap-4 pt-4">
+            <div className="flex items-center text-sm text-gray-500">
+              <Clock size={16} className="mr-2" />
+              {selectedTopic.estimatedTime || '30 minutes'}
             </div>
-          ))
+            <div className="flex items-center text-sm text-gray-500">
+              <Tag size={16} className="mr-2" />
+              {selectedTopic.category}
+            </div>
+            <div className="flex items-center text-sm text-gray-500">
+              <BookOpen size={16} className="mr-2" />
+              {selectedTopic.difficulty}
+            </div>
+          </div>
+
+          {/* Prerequisites if available */}
+          {selectedTopic.prerequisites && selectedTopic.prerequisites.length > 0 && (
+            <div className="pt-4">
+              <h3 className="text-sm font-medium text-gray-700">Prerequisites</h3>
+              <ul className="mt-2 text-sm text-gray-600 list-disc pl-5">
+                {selectedTopic.prerequisites.map((prereq, index) => (
+                  <li key={index}>{prereq}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Example Content */}
+      <div className="bg-white rounded-lg shadow-sm">
+        {exampleContent ? (
+          <Suspense fallback={<div className="p-6">Loading content...</div>}>
+            <exampleContent.Component metadata={exampleContent.metadata} />
+          </Suspense>
         ) : (
-          <div className="text-center text-gray-500">
-            No examples available for this topic.
+          <div className="p-6 text-gray-500">
+            Example content not available.
           </div>
         )}
       </div>

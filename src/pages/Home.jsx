@@ -1,4 +1,3 @@
-// src/pages/Home.jsx
 import React from 'react';
 import { useTopics } from '../context/TopicContext';
 import TopicGrid from '../components/topics/TopicGrid';
