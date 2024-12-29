@@ -19,8 +19,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Fetch all history for git info
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -29,32 +27,17 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          npm ci
-          npm install -g vite
-
-      # Copy all example files to dist during build
-      - name: Create build script
-        run: |
-          echo '#!/bin/bash
-          mkdir -p dist/examples
-          cp -r src/examples dist/
-          npm run build' > build.sh
-          chmod +x build.sh
+        run: npm ci
 
       - name: Build project
-        run: ./build.sh
+        run: npm run build
         env:
           VITE_APP_BASE_URL: 'https://demastery.com'
           NODE_ENV: 'production'
 
-      # Ensure examples directory exists in dist after build
-      - name: Verify build
-        run: |
-          if [ ! -d "dist/examples" ]; then
-            echo "Examples directory missing from build"
-            exit 1
-          fi
+      # Create a .nojekyll file to prevent GitHub Pages from ignoring files that begin with an underscore
+      - name: Add .nojekyll file
+        run: touch ./dist/.nojekyll
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

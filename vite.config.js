@@ -3,6 +3,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Helper to copy directory recursively
 function copyDirectory(src, dest) {
@@ -29,7 +32,7 @@ export default defineConfig({
     react(),
     {
       name: "copy-examples",
-      closeBundle() {
+      writeBundle() {
         // Copy examples directory to dist
         const examplesDir = path.resolve(__dirname, "src/examples");
         const destDir = path.resolve(__dirname, "dist/examples");
@@ -47,13 +50,20 @@ export default defineConfig({
         main: path.resolve(__dirname, "index.html"),
       },
       output: {
-        manualChunks: {
-          vendor: ["react", "react-dom", "recharts", "lucide-react"],
-          examples: ["./src/examples/**/*"],
+        manualChunks: (id) => {
+          if (id.includes("node_modules")) {
+            if (
+              id.includes("react") ||
+              id.includes("recharts") ||
+              id.includes("lucide-react")
+            ) {
+              return "vendor";
+            }
+          }
+          return null;
         },
       },
     },
-    // Ensure source maps are generated
     sourcemap: true,
   },
   resolve: {
