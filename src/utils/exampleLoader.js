@@ -1,39 +1,52 @@
 // src/utils/exampleLoader.js
+import ETLBasicsComponent from "../examples/fundamentals/beginner/etl-basics/index.jsx";
+import SparkAnalyticsComponent from "../examples/analytics/intermediate/spark-analytics/index.jsx";
 
-// Import examples and metadata
-import { metadata as etlMetadata } from "../examples/fundamentals/beginner/etl-basics/metadata.js";
-import { metadata as sparkMetadata } from "../examples/analytics/intermediate/spark-analytics/metadata.js";
-import ETLBasics from "../examples/fundamentals/beginner/etl-basics/index.jsx";
-import SparkAnalytics from "../examples/analytics/intermediate/spark-analytics/index.jsx";
-
-// Map of all examples
-const EXAMPLES = {
-  "etl-basics": {
-    component: ETLBasics,
-    metadata: etlMetadata,
+// Static example data
+const EXAMPLES_DATA = [
+  {
+    id: "etl-basics",
+    category: "Fundamentals",
+    title: "ETL Basics",
+    description: "Learn the fundamentals of Extract, Transform, Load processes",
+    difficulty: "Beginner",
+    topics: ["ETL", "Data Pipeline", "Python", "Pandas"],
+    prerequisites: ["Basic Python knowledge", "Understanding of CSV files"],
+    order: 1,
+    created: "2024-01-01",
+    updated: "2024-03-15",
+    author: "John Doe",
+    estimatedTime: "30 minutes",
+    visualization: "ETLPipeline",
+    component: ETLBasicsComponent,
   },
-  "spark-analytics": {
-    component: SparkAnalytics,
-    metadata: sparkMetadata,
+  {
+    id: "spark-analytics",
+    category: "Analytics",
+    title: "Spark Analytics Deep Dive",
+    description: "Learn advanced data analytics techniques using PySpark",
+    difficulty: "Intermediate",
+    topics: ["Spark", "Analytics", "Big Data"],
+    prerequisites: ["Python knowledge", "Basic SQL"],
+    order: 2,
+    created: "2024-01-15",
+    updated: "2024-03-20",
+    author: "Jane Smith",
+    estimatedTime: "45 minutes",
+    visualization: "DataFlowChart",
+    component: SparkAnalyticsComponent,
   },
-};
+];
 
 export async function loadExampleMetadata() {
   console.log("Starting to load metadata...");
-  try {
-    // Return all metadata
-    const examples = Object.values(EXAMPLES).map((ex) => ex.metadata);
-    console.log("Loaded examples:", examples);
-    return examples;
-  } catch (error) {
-    console.error("Error loading metadata:", error);
-    return [];
-  }
+  // Return metadata without the component field
+  return EXAMPLES_DATA.map(({ component, ...rest }) => rest);
 }
 
 export async function getExampleComponent(id) {
   try {
-    const example = EXAMPLES[id];
+    const example = EXAMPLES_DATA.find((ex) => ex.id === id);
     if (!example) {
       console.error(`Example not found: ${id}`);
       return null;
@@ -45,7 +58,9 @@ export async function getExampleComponent(id) {
   }
 }
 
-// Helper function to get metadata for a specific example
 export async function loadExampleMetadataById(id) {
-  return EXAMPLES[id]?.metadata || null;
+  const example = EXAMPLES_DATA.find((ex) => ex.id === id);
+  if (!example) return null;
+  const { component, ...metadata } = example;
+  return metadata;
 }
