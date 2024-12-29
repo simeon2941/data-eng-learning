@@ -11,6 +11,10 @@ const EXAMPLE_PATHS = {
   'spark-analytics': {
     index: () => import('@/examples/analytics/intermediate/spark-analytics/index.jsx'),
     metadata: () => import('@/examples/analytics/intermediate/spark-analytics/metadata.js')
+  },
+  'data-quality': {
+    index: () => import('@/examples/fundamentals/beginner/data-quality/index.jsx'),
+    metadata: () => import('@/examples/fundamentals/beginner/data-quality/metadata.js')
   }
 };
 
