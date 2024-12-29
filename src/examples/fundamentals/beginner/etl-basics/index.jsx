@@ -1,3 +1,4 @@
+// index.jsx
 import React, { useState } from 'react';
 import ETLVisualization from './visualization';
 
@@ -6,11 +7,11 @@ const ETLBasicsExample = () => {
 
   const OverviewTab = () => (
     <div className="prose max-w-none">
-      <h2 className="text-2xl font-bold mb-4">Overview</h2>
-      <p className="mb-4">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">Overview</h2>
+      <p className="mb-4 text-sm sm:text-base">
         ETL (Extract, Transform, Load) is a fundamental data engineering process that consists of three main steps:
       </p>
-      <ul className="list-disc pl-6 mb-6">
+      <ul className="list-disc pl-4 sm:pl-6 mb-6 text-sm sm:text-base">
         <li className="mb-2">
           <strong>Extract:</strong> Gathering data from source systems (databases, files, APIs)
         </li>
@@ -22,8 +23,8 @@ const ETLBasicsExample = () => {
         </li>
       </ul>
       
-      <h3 className="text-xl font-bold mb-4">Pipeline Visualization</h3>
-      <div className="bg-gray-50 p-4 rounded-lg mb-6">
+      <h3 className="text-lg sm:text-xl font-bold mb-4">Pipeline Visualization</h3>
+      <div className="bg-gray-50 p-2 sm:p-4 rounded-lg mb-6 overflow-x-auto">
         <ETLVisualization />
       </div>
     </div>
@@ -31,10 +32,10 @@ const ETLBasicsExample = () => {
 
   const ImplementationTab = () => (
     <div className="prose max-w-none">
-      <h2 className="text-2xl font-bold mb-4">Implementation</h2>
-      <p className="mb-4">Here's a basic ETL pipeline implementation in Python:</p>
-      <div className="bg-gray-50 p-4 rounded-lg mb-6">
-        <pre className="language-python">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">Implementation</h2>
+      <p className="mb-4 text-sm sm:text-base">Here's a basic ETL pipeline implementation in Python:</p>
+      <div className="bg-gray-50 p-2 sm:p-4 rounded-lg mb-6 overflow-x-auto">
+        <pre className="language-python text-xs sm:text-sm">
           <code>{`import pandas as pd
 import logging
 from datetime import datetime
@@ -89,8 +90,8 @@ class ETLPipeline:
 
   const BestPracticesTab = () => (
     <div className="prose max-w-none">
-      <h2 className="text-2xl font-bold mb-4">Best Practices</h2>
-      <ul className="list-disc pl-6 space-y-4">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">Best Practices</h2>
+      <ul className="list-disc pl-4 sm:pl-6 space-y-3 sm:space-y-4 text-sm sm:text-base">
         <li>
           <strong>Error Handling:</strong>
           <p>Implement robust error handling and logging at each stage</p>
@@ -122,24 +123,27 @@ class ETLPipeline:
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex space-x-4 border-b">
-        {Object.keys(tabs).map(tabName => (
-          <button
-            key={tabName}
-            className={`px-4 py-2 text-sm font-medium capitalize 
-              ${activeTab === tabName 
-                ? 'border-b-2 border-blue-500 text-blue-600' 
-                : 'text-gray-600 hover:text-blue-500'
-              }`}
-            onClick={() => setActiveTab(tabName)}
-          >
-            {tabName}
-          </button>
-        ))}
+    <div className="space-y-4 sm:space-y-6">
+      {/* Scrollable tabs container for mobile */}
+      <div className="overflow-x-auto">
+        <div className="flex space-x-2 sm:space-x-4 border-b min-w-max">
+          {Object.keys(tabs).map(tabName => (
+            <button
+              key={tabName}
+              className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium capitalize whitespace-nowrap
+                ${activeTab === tabName 
+                  ? 'border-b-2 border-blue-500 text-blue-600' 
+                  : 'text-gray-600 hover:text-blue-500'
+                }`}
+              onClick={() => setActiveTab(tabName)}
+            >
+              {tabName.replace(/([A-Z])/g, ' $1').trim()}
+            </button>
+          ))}
+        </div>
       </div>
       
-      <div className="bg-white rounded-lg">
+      <div className="bg-white rounded-lg p-4">
         {tabs[activeTab]}
       </div>
     </div>

@@ -1,3 +1,4 @@
+// index.jsx
 import React, { useState } from 'react';
 import SparkVisualization from './visualization';
 
@@ -6,19 +7,19 @@ const SparkAnalyticsExample = () => {
 
   const OverviewTab = () => (
     <div className="prose max-w-none">
-      <h2 className="text-2xl font-bold mb-4">Overview</h2>
-      <p className="mb-4">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">Overview</h2>
+      <p className="mb-4 text-sm sm:text-base">
         Apache Spark is a powerful analytics engine for large-scale data processing.
         This guide covers advanced analytics techniques including:
       </p>
-      <ul className="list-disc pl-6 mb-6">
+      <ul className="list-disc pl-4 sm:pl-6 mb-6 text-sm sm:text-base">
         <li className="mb-2">Complex aggregations and window functions</li>
         <li className="mb-2">Performance optimization techniques</li>
         <li className="mb-2">Best practices for large-scale data processing</li>
       </ul>
       
-      <h3 className="text-xl font-bold mb-4">Performance Analysis</h3>
-      <div className="bg-gray-50 p-4 rounded-lg mb-6">
+      <h3 className="text-lg sm:text-xl font-bold mb-4">Performance Analysis</h3>
+      <div className="bg-gray-50 p-2 sm:p-4 rounded-lg mb-6 overflow-x-auto">
         <SparkVisualization />
       </div>
     </div>
@@ -26,10 +27,10 @@ const SparkAnalyticsExample = () => {
 
   const ImplementationTab = () => (
     <div className="prose max-w-none">
-      <h2 className="text-2xl font-bold mb-4">Implementation</h2>
-      <p className="mb-4">Here's an example of advanced PySpark analytics:</p>
-      <div className="bg-gray-50 p-4 rounded-lg mb-6">
-        <pre className="language-python"><code>{`from pyspark.sql import SparkSession
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">Implementation</h2>
+      <p className="mb-4 text-sm sm:text-base">Here's an example of advanced PySpark analytics:</p>
+      <div className="bg-gray-50 p-2 sm:p-4 rounded-lg mb-6 overflow-x-auto">
+        <pre className="language-python text-xs sm:text-sm"><code>{`from pyspark.sql import SparkSession
 from pyspark.sql import Window
 from pyspark.sql.functions import *
 
@@ -73,9 +74,9 @@ result = df_analytics.groupBy("category").agg(
 )`}</code></pre>
       </div>
 
-      <h3 className="text-xl font-bold mb-4">SQL Implementation</h3>
-      <div className="bg-gray-50 p-4 rounded-lg mb-6">
-        <pre className="language-sql"><code>{`-- Equivalent SQL implementation
+      <h3 className="text-lg sm:text-xl font-bold mb-4">SQL Implementation</h3>
+      <div className="bg-gray-50 p-2 sm:p-4 rounded-lg mb-6 overflow-x-auto">
+        <pre className="language-sql text-xs sm:text-sm"><code>{`-- Equivalent SQL implementation
 WITH windowed_sales AS (
   SELECT *,
     AVG(revenue) OVER (
@@ -107,12 +108,12 @@ GROUP BY category;`}</code></pre>
 
   const OptimizationTab = () => (
     <div className="prose max-w-none">
-      <h2 className="text-2xl font-bold mb-4">Performance Optimization</h2>
-      <ul className="list-disc pl-6 space-y-4">
+      <h2 className="text-xl sm:text-2xl font-bold mb-4">Performance Optimization</h2>
+      <ul className="list-disc pl-4 sm:pl-6 space-y-3 sm:space-y-4 text-sm sm:text-base">
         <li>
           <strong>Caching Strategy:</strong>
           <p>Cache intermediate results when data is reused multiple times</p>
-          <pre className="language-python"><code>{`# Cache intermediate results
+          <pre className="language-python text-xs sm:text-sm overflow-x-auto"><code>{`# Cache intermediate results
 df_transformed.cache()
 
 # Force cache materialization
@@ -124,7 +125,7 @@ df_transformed.unpersist()`}</code></pre>
         <li>
           <strong>Partition Optimization:</strong>
           <p>Optimize data partitioning for better parallel processing</p>
-          <pre className="language-python"><code>{`# Repartition data
+          <pre className="language-python text-xs sm:text-sm overflow-x-auto"><code>{`# Repartition data
 df_optimized = df.repartition(
     "category"
 ).sortWithinPartitions("date")`}</code></pre>
@@ -132,7 +133,7 @@ df_optimized = df.repartition(
         <li>
           <strong>Query Optimization:</strong>
           <p>Use broadcast joins for small tables</p>
-          <pre className="language-python"><code>{`from pyspark.sql.functions import broadcast
+          <pre className="language-python text-xs sm:text-sm overflow-x-auto"><code>{`from pyspark.sql.functions import broadcast
 
 # Broadcast small lookup table
 result = df.join(
@@ -151,24 +152,27 @@ result = df.join(
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex space-x-4 border-b">
-        {Object.keys(tabs).map(tabName => (
-          <button
-            key={tabName}
-            className={`px-4 py-2 text-sm font-medium capitalize 
-              ${activeTab === tabName 
-                ? 'border-b-2 border-blue-500 text-blue-600' 
-                : 'text-gray-600 hover:text-blue-500'
-              }`}
-            onClick={() => setActiveTab(tabName)}
-          >
-            {tabName}
-          </button>
-        ))}
+    <div className="space-y-4 sm:space-y-6">
+      {/* Scrollable tabs container for mobile */}
+      <div className="overflow-x-auto">
+        <div className="flex space-x-2 sm:space-x-4 border-b min-w-max">
+          {Object.keys(tabs).map(tabName => (
+            <button
+              key={tabName}
+              className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium capitalize whitespace-nowrap
+                ${activeTab === tabName 
+                  ? 'border-b-2 border-blue-500 text-blue-600' 
+                  : 'text-gray-600 hover:text-blue-500'
+                }`}
+              onClick={() => setActiveTab(tabName)}
+            >
+              {tabName.replace(/([A-Z])/g, ' $1').trim()}
+            </button>
+          ))}
+        </div>
       </div>
       
-      <div className="bg-white rounded-lg">
+      <div className="bg-white rounded-lg p-4">
         {tabs[activeTab]}
       </div>
     </div>

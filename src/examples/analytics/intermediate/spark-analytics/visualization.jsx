@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar } from 'recharts';
+// visualization.jsx
+import React, { useState, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, ResponsiveContainer } from 'recharts';
 
 const SparkVisualization = () => {
   const [activeView, setActiveView] = useState('performance');
@@ -21,9 +22,9 @@ const SparkVisualization = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex space-x-4">
+      <div className="flex flex-wrap gap-2">
         <button
-          className={`px-4 py-2 text-sm rounded 
+          className={`px-3 sm:px-4 py-2 text-xs sm:text-sm rounded 
             ${activeView === 'performance' 
               ? 'bg-blue-500 text-white' 
               : 'bg-gray-200 hover:bg-gray-300'}`}
@@ -32,7 +33,7 @@ const SparkVisualization = () => {
           Processing Time
         </button>
         <button
-          className={`px-4 py-2 text-sm rounded 
+          className={`px-3 sm:px-4 py-2 text-xs sm:text-sm rounded 
             ${activeView === 'resources' 
               ? 'bg-blue-500 text-white' 
               : 'bg-gray-200 hover:bg-gray-300'}`}
@@ -42,41 +43,43 @@ const SparkVisualization = () => {
         </button>
       </div>
 
-      <div className="h-64 bg-white p-4 rounded-lg">
-        {activeView === 'performance' ? (
-          <LineChart width={600} height={240} data={performanceData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="stage" />
-            <YAxis yAxisId="left" />
-            <YAxis yAxisId="right" orientation="right" />
-            <Tooltip />
-            <Legend />
-            <Line 
-              yAxisId="left" 
-              type="monotone" 
-              dataKey="time" 
-              stroke="#8884d8" 
-              name="Processing Time (s)" 
-            />
-            <Line 
-              yAxisId="right" 
-              type="monotone" 
-              dataKey="memory" 
-              stroke="#82ca9d" 
-              name="Memory Usage (GB)" 
-            />
-          </LineChart>
-        ) : (
-          <BarChart width={600} height={240} data={resourceData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="resource" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="optimized" fill="#82ca9d" name="Optimized" />
-            <Bar dataKey="baseline" fill="#8884d8" name="Baseline" />
-          </BarChart>
-        )}
+      <div className="h-64 sm:h-72 bg-white p-2 sm:p-4 rounded-lg">
+        <ResponsiveContainer width="100%" height="100%">
+          {activeView === 'performance' ? (
+            <LineChart data={performanceData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="stage" />
+              <YAxis yAxisId="left" />
+              <YAxis yAxisId="right" orientation="right" />
+              <Tooltip />
+              <Legend />
+              <Line 
+                yAxisId="left" 
+                type="monotone" 
+                dataKey="time" 
+                stroke="#8884d8" 
+                name="Processing Time (s)" 
+              />
+              <Line 
+                yAxisId="right" 
+                type="monotone" 
+                dataKey="memory" 
+                stroke="#82ca9d" 
+                name="Memory Usage (GB)" 
+              />
+            </LineChart>
+          ) : (
+            <BarChart data={resourceData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="resource" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="optimized" fill="#82ca9d" name="Optimized" />
+              <Bar dataKey="baseline" fill="#8884d8" name="Baseline" />
+            </BarChart>
+          )}
+        </ResponsiveContainer>
       </div>
     </div>
   );

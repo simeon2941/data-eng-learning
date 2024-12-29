@@ -1,8 +1,8 @@
+// TopicDetail.jsx
 import React, { useState, useEffect, Suspense } from 'react';
 import { useTopics } from '../../context/TopicContext';
 import { ChevronLeft, Clock, BookOpen, Tag } from 'lucide-react';
 
-// Map of example paths to maintain dynamic imports
 const EXAMPLE_PATHS = {
   'etl-basics': {
     index: () => import('@/examples/fundamentals/beginner/etl-basics/index.jsx'),
@@ -33,13 +33,8 @@ const TopicDetail = () => {
           throw new Error('Example path not found');
         }
 
-        console.log('Loading index.jsx for:', selectedTopic.id);
         const indexModule = await exampleImports.index().catch(() => ({ default: () => <div>Example not found</div> }));
-        console.log('Loaded index.jsx:', indexModule);
-
-        console.log('Loading metadata.js for:', selectedTopic.id);
         const metadataModule = await exampleImports.metadata().catch(() => ({ default: {} }));
-        console.log('Loaded metadata.js:', metadataModule);
 
         setExampleContent({
           Component: indexModule.default,
@@ -60,7 +55,7 @@ const TopicDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="max-w-5xl mx-auto p-8">
+      <div className="max-w-5xl mx-auto p-4 sm:p-8">
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
         </div>
@@ -70,7 +65,7 @@ const TopicDetail = () => {
 
   if (error) {
     return (
-      <div className="max-w-5xl mx-auto p-8">
+      <div className="max-w-5xl mx-auto p-4 sm:p-8">
         <button
           onClick={() => setSelectedTopic(null)}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-900 mb-4"
@@ -86,7 +81,7 @@ const TopicDetail = () => {
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 p-8">
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6 p-4 sm:p-8">
       {/* Header with back button */}
       <button
         onClick={() => setSelectedTopic(null)}
@@ -97,22 +92,22 @@ const TopicDetail = () => {
       </button>
 
       {/* Topic Header */}
-      <div className="bg-white rounded-lg p-6 shadow-sm">
+      <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
         <div className="space-y-4">
-          <h1 className="text-2xl font-bold text-gray-900">{selectedTopic.title}</h1>
-          <p className="text-gray-600">{selectedTopic.description}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{selectedTopic.title}</h1>
+          <p className="text-sm sm:text-base text-gray-600">{selectedTopic.description}</p>
           
           {/* Metadata */}
-          <div className="flex flex-wrap gap-4 pt-4">
-            <div className="flex items-center text-sm text-gray-500">
+          <div className="flex flex-wrap gap-3 sm:gap-4 pt-4">
+            <div className="flex items-center text-xs sm:text-sm text-gray-500">
               <Clock size={16} className="mr-2" />
               {exampleContent?.metadata?.estimatedTime || '30 minutes'}
             </div>
-            <div className="flex items-center text-sm text-gray-500">
+            <div className="flex items-center text-xs sm:text-sm text-gray-500">
               <Tag size={16} className="mr-2" />
               {exampleContent?.metadata?.category || 'General'}
             </div>
-            <div className="flex items-center text-sm text-gray-500">
+            <div className="flex items-center text-xs sm:text-sm text-gray-500">
               <BookOpen size={16} className="mr-2" />
               {exampleContent?.metadata?.difficulty || 'Beginner'}
             </div>
@@ -122,7 +117,7 @@ const TopicDetail = () => {
           {exampleContent?.metadata?.prerequisites && exampleContent.metadata.prerequisites.length > 0 && (
             <div className="pt-4">
               <h3 className="text-sm font-medium text-gray-700">Prerequisites</h3>
-              <ul className="mt-2 text-sm text-gray-600 list-disc pl-5">
+              <ul className="mt-2 text-xs sm:text-sm text-gray-600 list-disc pl-5">
                 {exampleContent.metadata.prerequisites.map((prereq, index) => (
                   <li key={index}>{prereq}</li>
                 ))}
@@ -133,13 +128,17 @@ const TopicDetail = () => {
       </div>
 
       {/* Example Content */}
-      <div className="bg-white rounded-lg shadow-sm">
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
         {exampleContent ? (
-          <Suspense fallback={<div className="p-6">Loading content...</div>}>
+          <Suspense fallback={
+            <div className="p-4 sm:p-6 flex justify-center items-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            </div>
+          }>
             <exampleContent.Component />
           </Suspense>
         ) : (
-          <div className="p-6 text-gray-500">
+          <div className="p-4 sm:p-6 text-sm sm:text-base text-gray-500">
             Example content not available.
           </div>
         )}

@@ -1,3 +1,4 @@
+// TopicCard.jsx
 import React from 'react';
 import { BookOpen, Clock, Tag } from 'lucide-react';
 import { useTopics } from '../../context/TopicContext';
@@ -20,37 +21,34 @@ const TopicCard = ({ example }) => {
   return (
     <div
       onClick={() => setSelectedTopic(example)}
-      className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-100 overflow-hidden"
+      className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer border border-gray-100 overflow-hidden w-full"
     >
-      {/* Card Header with Icon */}
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         <div className="flex items-start space-x-4 mb-4">
-          <div className={`p-3 rounded-lg ${iconColors[example.difficulty]}`}>
-            <BookOpen className="h-6 w-6" />
+          <div className={`p-2 sm:p-3 rounded-lg ${iconColors[example.difficulty]}`}>
+            <BookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
-          <div>
-            <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors text-sm sm:text-base truncate">
               {example.title}
             </h3>
-            <p className="text-sm text-gray-500 mt-1">{example.description}</p>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1 line-clamp-2">{example.description}</p>
           </div>
         </div>
         
-        {/* Metadata */}
-        <div className="flex flex-wrap items-center gap-4 mt-4">
-          <div className="flex items-center text-gray-500 text-sm">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-4">
+          <div className="flex items-center text-gray-500 text-xs sm:text-sm">
             <Tag size={14} className="mr-1" />
-            {example.category}
+            <span className="truncate">{example.category}</span>
           </div>
-          <div className="flex items-center text-gray-500 text-sm">
+          <div className="flex items-center text-gray-500 text-xs sm:text-sm">
             <Clock size={14} className="mr-1" />
             {example.estimatedTime || `${example.time} minutes`}
           </div>
         </div>
         
-        {/* Difficulty Badge */}
         <div className="mt-4 flex justify-end">
-          <span className={`text-xs px-3 py-1 rounded-full ${difficultyColors[example.difficulty]} font-medium`}>
+          <span className={`text-xs px-2 sm:px-3 py-1 rounded-full ${difficultyColors[example.difficulty]} font-medium`}>
             {example.difficulty}
           </span>
         </div>

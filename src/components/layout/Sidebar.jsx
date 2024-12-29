@@ -1,3 +1,4 @@
+// Sidebar.jsx
 import React, { useState } from 'react';
 import { Search, Database, Menu, X, Home, ChevronRight } from 'lucide-react';
 import { useTopics } from '../../context/TopicContext';
@@ -15,7 +16,6 @@ const Sidebar = () => {
     selectedTopic
   } = useTopics();
 
-  // Group examples by category
   const examplesByCategory = examples?.reduce((acc, example) => {
     if (!example?.category) return acc;
     acc[example.category] = acc[example.category] || [];
@@ -23,21 +23,23 @@ const Sidebar = () => {
     return acc;
   }, {}) || {};
 
-  // Handle search clear
   const clearSearch = () => {
     setSearchQuery('');
-    // Focus back on search input
     document.getElementById('search-input')?.focus();
   };
 
-  // Handle home click
   const goHome = () => {
     setSelectedTopic(null);
     setSearchQuery('');
   };
 
   return (
-    <div className={`${isSidebarOpen ? 'w-64' : 'w-16'} bg-white shadow-lg transition-all duration-300 flex flex-col`}>
+    <div className={`
+      ${isSidebarOpen ? 'w-full md:w-64' : 'w-full md:w-16'} 
+      bg-white shadow-lg transition-all duration-300 flex flex-col
+      fixed md:relative bottom-0 md:bottom-auto z-50 md:z-0
+      h-16 md:h-screen
+    `}>
       {/* Header */}
       <div className="p-4 flex items-center justify-between border-b border-gray-100">
         <button 
@@ -45,7 +47,7 @@ const Sidebar = () => {
           className={`font-bold text-xl text-gray-900 hover:text-blue-600 transition-colors flex items-center ${!isSidebarOpen && 'hidden'}`}
         >
           <Home size={20} className="mr-2" />
-          DeMastery
+          <span className="hidden md:inline">DeMastery</span>
         </button>
         <button 
           onClick={() => setSidebarOpen(!isSidebarOpen)}
@@ -57,7 +59,7 @@ const Sidebar = () => {
       </div>
       
       {isSidebarOpen && (
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden bg-white absolute md:relative w-full top-16 md:top-0 h-[calc(100vh-4rem)] md:h-auto">
           {/* Search */}
           <div className="p-4">
             <div className="relative">
@@ -117,7 +119,12 @@ const Sidebar = () => {
                     {categoryExamples.map(example => (
                       <button
                         key={example.id}
-                        onClick={() => setSelectedTopic(example)}
+                        onClick={() => {
+                          setSelectedTopic(example);
+                          if (window.innerWidth < 768) {
+                            setSidebarOpen(false);
+                          }
+                        }}
                         className={`w-full text-left group flex items-center justify-between p-2 rounded-lg hover:bg-gray-50 ${
                           selectedTopic?.id === example.id ? 'bg-blue-50 text-blue-600' : 'text-gray-600'
                         }`}
