@@ -6,12 +6,10 @@ import { ChevronLeft, Clock, BookOpen, Tag } from 'lucide-react';
 const EXAMPLE_PATHS = {
   'etl-basics': {
     index: () => import('@/examples/fundamentals/beginner/etl-basics/index.jsx'),
-    visualization: () => import('@/examples/fundamentals/beginner/etl-basics/visualization.jsx'),
     metadata: () => import('@/examples/fundamentals/beginner/etl-basics/metadata.js')
   },
   'spark-analytics': {
     index: () => import('@/examples/analytics/intermediate/spark-analytics/index.jsx'),
-    visualization: () => import('@/examples/analytics/intermediate/spark-analytics/visualization.jsx'),
     metadata: () => import('@/examples/analytics/intermediate/spark-analytics/metadata.js')
   }
 };
@@ -37,15 +35,13 @@ const TopicDetail = () => {
         }
 
         // Dynamically import all files
-        const [indexModule, visualizationModule, metadataModule] = await Promise.all([
+        const [indexModule, metadataModule] = await Promise.all([
           exampleImports.index(),
-          exampleImports.visualization(),
           exampleImports.metadata()
         ]);
 
         setExampleContent({
           Component: indexModule.default,
-          Visualization: visualizationModule.default,
           metadata: metadataModule.default
         });
       } catch (err) {
@@ -140,9 +136,6 @@ const TopicDetail = () => {
         {exampleContent ? (
           <Suspense fallback={<div className="p-6">Loading content...</div>}>
             <exampleContent.Component />
-            <div className="mt-6 p-6">
-              <exampleContent.Visualization />
-            </div>
           </Suspense>
         ) : (
           <div className="p-6 text-gray-500">
