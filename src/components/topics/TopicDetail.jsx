@@ -6,12 +6,12 @@ import { ChevronLeft, Clock, BookOpen, Tag } from 'lucide-react';
 const EXAMPLE_PATHS = {
   'etl-basics': {
     index: () => import('@/examples/fundamentals/beginner/etl-basics/index.jsx'),
-    visualization: () => import('@/examples/fundamentals/beginner/etl-basics/Visualization.jsx'),
+    visualization: () => import('@/examples/fundamentals/beginner/etl-basics/visualization.jsx'),
     metadata: () => import('@/examples/fundamentals/beginner/etl-basics/metadata.js')
   },
   'spark-analytics': {
     index: () => import('@/examples/analytics/intermediate/spark-analytics/index.jsx'),
-    visualization: () => import('@/examples/analytics/intermediate/spark-analytics/Visualization.jsx'),
+    visualization: () => import('@/examples/analytics/intermediate/spark-analytics/visualization.jsx'),
     metadata: () => import('@/examples/analytics/intermediate/spark-analytics/metadata.js')
   }
 };
