@@ -2,9 +2,22 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useTopics } from '../../context/TopicContext';
 import { ChevronLeft, Clock, BookOpen, Tag } from 'lucide-react';
 
+// Map of example paths to maintain dynamic imports
+const EXAMPLE_PATHS = {
+  'etl-basics': {
+    index: () => import('@/examples/fundamentals/beginner/etl-basics/index.jsx'),
+    visualization: () => import('@/examples/fundamentals/beginner/etl-basics/Visualization.jsx'),
+    metadata: () => import('@/examples/fundamentals/beginner/etl-basics/metadata.js')
+  },
+  'spark-analytics': {
+    index: () => import('@/examples/analytics/intermediate/spark-analytics/index.jsx'),
+    visualization: () => import('@/examples/analytics/intermediate/spark-analytics/Visualization.jsx'),
+    metadata: () => import('@/examples/analytics/intermediate/spark-analytics/metadata.js')
+  }
+};
+
 const TopicDetail = () => {
   const { selectedTopic, setSelectedTopic } = useTopics();
-  const [activeTab, setActiveTab] = useState('overview');
   const [exampleContent, setExampleContent] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,18 +29,24 @@ const TopicDetail = () => {
       setIsLoading(true);
       setError(null);
       try {
-        // Try to import the example's index file
-        const basePath = `../../examples/${selectedTopic.category.toLowerCase()}/${selectedTopic.difficulty.toLowerCase()}/${selectedTopic.id}`;
+        // Get the dynamic import functions for this example
+        const exampleImports = EXAMPLE_PATHS[selectedTopic.id];
         
-        // Import both the example component and its metadata
-        const [exampleModule, metadataModule] = await Promise.all([
-          import(/* @vite-ignore */ `${basePath}/index.jsx`),
-          import(/* @vite-ignore */ `${basePath}/metadata.js`)
+        if (!exampleImports) {
+          throw new Error('Example path not found');
+        }
+
+        // Dynamically import all files
+        const [indexModule, visualizationModule, metadataModule] = await Promise.all([
+          exampleImports.index(),
+          exampleImports.visualization(),
+          exampleImports.metadata()
         ]);
 
         setExampleContent({
-          Component: exampleModule.default,
-          metadata: metadataModule.metadata
+          Component: indexModule.default,
+          Visualization: visualizationModule.default,
+          metadata: metadataModule.default
         });
       } catch (err) {
         console.error('Error loading example:', err);
@@ -90,24 +109,24 @@ const TopicDetail = () => {
           <div className="flex flex-wrap gap-4 pt-4">
             <div className="flex items-center text-sm text-gray-500">
               <Clock size={16} className="mr-2" />
-              {selectedTopic.estimatedTime || '30 minutes'}
+              {exampleContent?.metadata?.estimatedTime || '30 minutes'}
             </div>
             <div className="flex items-center text-sm text-gray-500">
               <Tag size={16} className="mr-2" />
-              {selectedTopic.category}
+              {exampleContent?.metadata?.category || 'General'}
             </div>
             <div className="flex items-center text-sm text-gray-500">
               <BookOpen size={16} className="mr-2" />
-              {selectedTopic.difficulty}
+              {exampleContent?.metadata?.difficulty || 'Beginner'}
             </div>
           </div>
 
           {/* Prerequisites if available */}
-          {selectedTopic.prerequisites && selectedTopic.prerequisites.length > 0 && (
+          {exampleContent?.metadata?.prerequisites && exampleContent.metadata.prerequisites.length > 0 && (
             <div className="pt-4">
               <h3 className="text-sm font-medium text-gray-700">Prerequisites</h3>
               <ul className="mt-2 text-sm text-gray-600 list-disc pl-5">
-                {selectedTopic.prerequisites.map((prereq, index) => (
+                {exampleContent.metadata.prerequisites.map((prereq, index) => (
                   <li key={index}>{prereq}</li>
                 ))}
               </ul>
@@ -120,7 +139,10 @@ const TopicDetail = () => {
       <div className="bg-white rounded-lg shadow-sm">
         {exampleContent ? (
           <Suspense fallback={<div className="p-6">Loading content...</div>}>
-            <exampleContent.Component metadata={exampleContent.metadata} />
+            <exampleContent.Component />
+            <div className="mt-6 p-6">
+              <exampleContent.Visualization />
+            </div>
           </Suspense>
         ) : (
           <div className="p-6 text-gray-500">

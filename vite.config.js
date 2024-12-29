@@ -1,17 +1,36 @@
 // vite.config.js
-import { defineConfig } from "vite";
+import { defineConfig, transformWithEsbuild } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    {
+      name: "treat-js-files-as-jsx",
+      async transform(code, id) {
+        if (!id.match(/src\/.*\.js$/)) return null;
 
-  // Use "/" when deploying to a custom domain in GitHub Pages
-  base: "/",
-
+        return transformWithEsbuild(code, id, {
+          loader: "jsx",
+          jsx: "automatic",
+        });
+      },
+    },
+    react(),
+  ],
+  // Use relative paths instead of absolute URL
+  base: "./",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  optimizeDeps: {
+    force: true,
+    esbuildOptions: {
+      loader: {
+        ".js": "jsx",
+      },
     },
   },
   build: {
@@ -20,18 +39,10 @@ export default defineConfig({
         manualChunks: {
           vendor: ["react", "react-dom", "recharts", "lucide-react"],
         },
-      },
-    },
-  },
-  esbuild: {
-    loader: "jsx",
-    include: /src\/.*\.jsx?$/,
-  },
-  optimizeDeps: {
-    esbuildOptions: {
-      loader: {
-        ".js": "jsx",
-        ".jsx": "jsx",
+        // Ensure assets use relative paths
+        assetFileNames: "assets/[name]-[hash][extname]",
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
       },
     },
   },

@@ -1,8 +1,9 @@
 // src/utils/exampleLoader.js
-import ETLBasicsComponent from "../examples/fundamentals/beginner/etl-basics/index.jsx";
-import SparkAnalyticsComponent from "../examples/analytics/intermediate/spark-analytics/index.jsx";
+// Import components statically
+import ETLVisualization from "../examples/fundamentals/beginner/etl-basics/visualization.jsx";
+import SparkVisualization from "../examples/analytics/intermediate/spark-analytics/visualization.jsx";
 
-// Static example data
+// Static examples data
 const EXAMPLES_DATA = [
   {
     id: "etl-basics",
@@ -18,7 +19,7 @@ const EXAMPLES_DATA = [
     author: "John Doe",
     estimatedTime: "30 minutes",
     visualization: "ETLPipeline",
-    component: ETLBasicsComponent,
+    component: ETLVisualization,
   },
   {
     id: "spark-analytics",
@@ -34,7 +35,7 @@ const EXAMPLES_DATA = [
     author: "Jane Smith",
     estimatedTime: "45 minutes",
     visualization: "DataFlowChart",
-    component: SparkAnalyticsComponent,
+    component: SparkVisualization,
   },
 ];
 
@@ -56,11 +57,4 @@ export async function getExampleComponent(id) {
     console.error(`Error loading component for ${id}:`, error);
     return null;
   }
-}
-
-export async function loadExampleMetadataById(id) {
-  const example = EXAMPLES_DATA.find((ex) => ex.id === id);
-  if (!example) return null;
-  const { component, ...metadata } = example;
-  return metadata;
 }
