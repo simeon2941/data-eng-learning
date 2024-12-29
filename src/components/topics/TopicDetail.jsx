@@ -27,18 +27,19 @@ const TopicDetail = () => {
       setIsLoading(true);
       setError(null);
       try {
-        // Get the dynamic import functions for this example
         const exampleImports = EXAMPLE_PATHS[selectedTopic.id];
         
         if (!exampleImports) {
           throw new Error('Example path not found');
         }
 
-        // Dynamically import all files
-        const [indexModule, metadataModule] = await Promise.all([
-          exampleImports.index(),
-          exampleImports.metadata()
-        ]);
+        console.log('Loading index.jsx for:', selectedTopic.id);
+        const indexModule = await exampleImports.index().catch(() => ({ default: () => <div>Example not found</div> }));
+        console.log('Loaded index.jsx:', indexModule);
+
+        console.log('Loading metadata.js for:', selectedTopic.id);
+        const metadataModule = await exampleImports.metadata().catch(() => ({ default: {} }));
+        console.log('Loaded metadata.js:', metadataModule);
 
         setExampleContent({
           Component: indexModule.default,
