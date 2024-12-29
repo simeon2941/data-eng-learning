@@ -1,20 +1,20 @@
 // src/utils/exampleLoader.js
 
-// Import examples explicitly
-import ETLBasics from "../examples/fundamentals/beginner/etl-basics";
-import SparkAnalytics from "../examples/analytics/intermediate/spark-analytics";
-import etlMetadata from "../examples/fundamentals/beginner/etl-basics/metadata";
-import sparkMetadata from "../examples/analytics/intermediate/spark-analytics/metadata";
+// Import examples and metadata
+import { metadata as etlMetadata } from "../examples/fundamentals/beginner/etl-basics/metadata.js";
+import { metadata as sparkMetadata } from "../examples/analytics/intermediate/spark-analytics/metadata.js";
+import ETLBasics from "../examples/fundamentals/beginner/etl-basics/index.jsx";
+import SparkAnalytics from "../examples/analytics/intermediate/spark-analytics/index.jsx";
 
 // Map of all examples
 const EXAMPLES = {
   "etl-basics": {
     component: ETLBasics,
-    metadata: etlMetadata.metadata,
+    metadata: etlMetadata,
   },
   "spark-analytics": {
     component: SparkAnalytics,
-    metadata: sparkMetadata.metadata,
+    metadata: sparkMetadata,
   },
 };
 
