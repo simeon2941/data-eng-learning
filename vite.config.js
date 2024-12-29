@@ -5,7 +5,10 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react()],
-  base: "https://demastery.com/",
+
+  // Use "/" when deploying to a custom domain in GitHub Pages
+  base: "/",
+
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -23,7 +26,6 @@ export default defineConfig({
   esbuild: {
     loader: "jsx",
     include: /src\/.*\.jsx?$/,
-    exclude: [],
   },
   optimizeDeps: {
     esbuildOptions: {
