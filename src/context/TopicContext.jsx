@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loadExampleMetadata } from '../utils/exampleLoader';
+import { loadExampleMetadata, getExampleComponent } from '../utils/exampleLoader';
 
 const TopicContext = createContext();
 
@@ -19,34 +19,12 @@ export function TopicProvider({ children }) {
         const loadedExamples = await loadExampleMetadata();
         console.log('Loaded examples:', loadedExamples);
 
-        if (!loadedExamples) {
-          setError('Failed to load examples');
+        if (!loadedExamples || loadedExamples.length === 0) {
+          setError('No examples available');
           return;
         }
 
-        // Create a hard-coded set of examples for testing
-        const testExamples = [
-          {
-            id: 'etl-basics',
-            category: 'Fundamentals',
-            title: 'ETL Basics',
-            description: 'Learn the fundamentals of Extract, Transform, Load processes',
-            difficulty: 'Beginner',
-            order: 1,
-            examples: ['etl-1']
-          },
-          {
-            id: 'spark-analytics',
-            category: 'Analytics',
-            title: 'Spark Analytics Deep Dive',
-            description: 'Learn advanced data analytics techniques using PySpark',
-            difficulty: 'Intermediate',
-            order: 2,
-            examples: ['spark-1']
-          }
-        ];
-
-        setExamples(loadedExamples.length > 0 ? loadedExamples : testExamples);
+        setExamples(loadedExamples);
       } catch (err) {
         console.error('Failed to load examples:', err);
         setError(err.message);
@@ -64,10 +42,25 @@ export function TopicProvider({ children }) {
     example?.description?.toLowerCase().includes(searchQuery?.toLowerCase() || '')
   );
 
+  // Handle selecting a topic
+  const handleTopicSelection = async (topic) => {
+    try {
+      if (topic) {
+        const component = await getExampleComponent(topic.id);
+        setSelectedTopic({ ...topic, component });
+      } else {
+        setSelectedTopic(null);
+      }
+    } catch (err) {
+      console.error('Error loading topic:', err);
+      setError('Failed to load topic content');
+    }
+  };
+
   const value = {
     examples: filteredExamples,
     selectedTopic,
-    setSelectedTopic,
+    setSelectedTopic: handleTopicSelection,
     searchQuery,
     setSearchQuery,
     isSidebarOpen,

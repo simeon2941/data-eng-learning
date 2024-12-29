@@ -1,35 +1,50 @@
 // src/utils/exampleLoader.js
+import ETLBasicsExample from "../examples/fundamentals/beginner/etl-basics/index.jsx";
+import SparkAnalyticsExample from "../examples/analytics/intermediate/spark-analytics/index.jsx";
 
-// Explicitly import all example components and metadata
-const EXAMPLES = {
-  'etl-basics': {
-    metadata: async () => (await import('@/examples/fundamentals/beginner/etl-basics/metadata.js')).metadata,
-    component: async () => (await import('@/examples/fundamentals/beginner/etl-basics/index.jsx')).default
+// Static examples data with components pre-loaded
+const EXAMPLES_DATA = [
+  {
+    id: "etl-basics",
+    category: "Fundamentals",
+    title: "ETL Basics",
+    description: "Learn the fundamentals of Extract, Transform, Load processes",
+    difficulty: "Beginner",
+    topics: ["ETL", "Data Pipeline", "Python", "Pandas"],
+    prerequisites: ["Basic Python knowledge", "Understanding of CSV files"],
+    order: 1,
+    created: "2024-01-01",
+    updated: "2024-03-15",
+    author: "John Doe",
+    estimatedTime: "30 minutes",
+    visualization: "ETLPipeline",
+    component: ETLBasicsExample,
   },
-  'spark-analytics': {
-    metadata: async () => (await import('@/examples/analytics/intermediate/spark-analytics/metadata.js')).metadata,
-    component: async () => (await import('@/examples/analytics/intermediate/spark-analytics/index.jsx')).default
-  }
-};
+  {
+    id: "spark-analytics",
+    category: "Analytics",
+    title: "Spark Analytics Deep Dive",
+    description: "Learn advanced data analytics techniques using PySpark",
+    difficulty: "Intermediate",
+    topics: ["Spark", "Analytics", "Big Data"],
+    prerequisites: ["Python knowledge", "Basic SQL"],
+    order: 2,
+    created: "2024-01-15",
+    updated: "2024-03-20",
+    author: "Jane Smith",
+    estimatedTime: "45 minutes",
+    visualization: "DataFlowChart",
+    component: SparkAnalyticsExample,
+  },
+];
 
 export async function loadExampleMetadata() {
   console.log("Starting to load metadata...");
   try {
-    const loadedExamples = await Promise.all(
-      Object.entries(EXAMPLES).map(async ([id, { metadata }]) => {
-        try {
-          const exampleMetadata = await metadata();
-          return exampleMetadata;
-        } catch (error) {
-          console.error(`Error loading metadata for ${id}:`, error);
-          return null;
-        }
-      })
-    );
-
-    const validExamples = loadedExamples.filter(Boolean);
-    console.log("Loaded examples:", validExamples);
-    return validExamples;
+    // Return metadata without the component field
+    const examples = EXAMPLES_DATA.map(({ component, ...rest }) => rest);
+    console.log("Loaded examples:", examples);
+    return examples;
   } catch (error) {
     console.error("Error loading metadata:", error);
     return [];
@@ -38,12 +53,12 @@ export async function loadExampleMetadata() {
 
 export async function getExampleComponent(id) {
   try {
-    const example = EXAMPLES[id];
+    const example = EXAMPLES_DATA.find((ex) => ex.id === id);
     if (!example) {
       console.error(`Example not found: ${id}`);
       return null;
     }
-    return await example.component();
+    return example.component;
   } catch (error) {
     console.error(`Error loading component for ${id}:`, error);
     return null;
