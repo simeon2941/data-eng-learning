@@ -15,6 +15,14 @@ const EXAMPLE_PATHS = {
   'data-quality': {
     index: () => import('@/examples/fundamentals/beginner/data-quality/index.jsx'),
     metadata: () => import('@/examples/fundamentals/beginner/data-quality/metadata.js')
+  },
+  'sql-basics': {
+    index: () => import('@/examples/SQL/sql-basics/index.jsx'),
+    metadata: () => import('@/examples/SQL/sql-basics/metadata.js')
+  },
+  'sql-aggregations': {
+    index: () => import('@/examples/SQL/sql-aggregations/index.jsx'),
+    metadata: () => import('@/examples/SQL/sql-aggregations/metadata.js')
   }
 };
 

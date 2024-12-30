@@ -20,6 +20,15 @@ const AVAILABLE_EXAMPLES = {
     component: () =>
       import("@/examples/analytics/intermediate/spark-analytics/index.jsx"),
   },
+  "sql-basics": {
+    // Added SQL basics example
+    metadata: () => import("@/examples/SQL/sql-basics/metadata.js"),
+    component: () => import("@/examples/SQL/sql-basics/index.jsx"),
+  },
+  "sql-aggregations": {
+    metadata: () => import("@/examples/SQL/sql-aggregations/metadata.js"),
+    component: () => import("@/examples/SQL/sql-aggregations/index.jsx"),
+  },
 };
 
 // Cache for loaded examples
